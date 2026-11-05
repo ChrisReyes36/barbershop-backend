@@ -53,7 +53,7 @@ export class CreateUserTable1793692607033 implements MigrationInterface {
         ],
         uniques: [
           {
-            name: 'UQ_user_email',
+            name: 'UQ_users_email',
             columnNames: ['email'],
           },
         ],

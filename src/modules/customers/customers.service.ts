@@ -90,7 +90,16 @@ export class CustomersService {
     }
   }
 
-  create(dto: CreateCustomerDto): Promise<Customer> {
+  async create(dto: CreateCustomerDto): Promise<Customer> {
+    if (dto.email) {
+      const emailTaken = await this.customersRepository.exists({
+        where: { email: dto.email },
+      });
+      if (emailTaken) {
+        throw new ConflictException(`Email ${dto.email} is already in use`);
+      }
+    }
+
     const customer = this.customersRepository.create({
       name: dto.name,
       email: dto.email ?? null,

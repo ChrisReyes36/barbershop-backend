@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsISO8601,
   IsOptional,
   IsString,
   IsUUID,
@@ -25,6 +26,10 @@ export class CreateAppointmentDto {
 
   @ApiProperty({ example: '2026-11-20', description: 'Fecha (YYYY-MM-DD)' })
   @Matches(DATE_REGEX, { message: 'appointmentDate must be YYYY-MM-DD' })
+  @IsISO8601(
+    { strict: true },
+    { message: 'appointmentDate must be a valid date' },
+  )
   appointmentDate: string;
 
   @ApiProperty({ example: '09:00', description: 'Hora de inicio (HH:mm)' })

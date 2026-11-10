@@ -3,6 +3,7 @@ import { Type } from 'class-transformer';
 import {
   IsEnum,
   IsInt,
+  IsISO8601,
   IsOptional,
   IsString,
   IsUUID,
@@ -72,6 +73,7 @@ export class ListAppointmentQueryDto {
   })
   @IsOptional()
   @Matches(DATE_REGEX, { message: 'dateFrom must be YYYY-MM-DD' })
+  @IsISO8601({ strict: true }, { message: 'dateFrom must be a valid date' })
   dateFrom?: string;
 
   @ApiPropertyOptional({
@@ -80,5 +82,6 @@ export class ListAppointmentQueryDto {
   })
   @IsOptional()
   @Matches(DATE_REGEX, { message: 'dateTo must be YYYY-MM-DD' })
+  @IsISO8601({ strict: true }, { message: 'dateTo must be a valid date' })
   dateTo?: string;
 }

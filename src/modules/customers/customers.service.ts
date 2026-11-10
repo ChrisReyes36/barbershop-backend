@@ -71,12 +71,7 @@ export class CustomersService {
     const customer = await this.findOne(id);
 
     if (dto.email && dto.email !== customer.email) {
-      const emailTaken = await this.customersRepository.exists({
-        where: { email: dto.email },
-      });
-      if (emailTaken) {
-        throw new ConflictException(`Email ${dto.email} is already in use`);
-      }
+      await this.assertEmailAvailable(dto.email);
     }
 
     Object.assign(customer, dto);
@@ -92,12 +87,7 @@ export class CustomersService {
 
   async create(dto: CreateCustomerDto): Promise<Customer> {
     if (dto.email) {
-      const emailTaken = await this.customersRepository.exists({
-        where: { email: dto.email },
-      });
-      if (emailTaken) {
-        throw new ConflictException(`Email ${dto.email} is already in use`);
-      }
+      await this.assertEmailAvailable(dto.email);
     }
 
     const customer = this.customersRepository.create({
@@ -106,5 +96,14 @@ export class CustomersService {
       phone: dto.phone ?? null,
     });
     return this.customersRepository.save(customer);
+  }
+
+  private async assertEmailAvailable(email: string): Promise<void> {
+    const emailTaken = await this.customersRepository.exists({
+      where: { email },
+    });
+    if (emailTaken) {
+      throw new ConflictException(`Email ${email} is already in use`);
+    }
   }
 }

@@ -80,6 +80,7 @@ export class BarbersController {
   @ApiOperation({ summary: 'Eliminar un barbero' })
   @ApiParam({ name: 'id', format: 'uuid' })
   @ApiNoContentResponse({ description: 'Barbero eliminado' })
+  @ApiConflictResponse({ description: 'El barbero tiene citas asociadas' })
   @ApiBadRequestResponse({ description: 'El id no es un UUID válido' })
   @ApiNotFoundResponse({ description: 'Barbero no encontrado' })
   remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {

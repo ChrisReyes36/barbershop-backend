@@ -5,7 +5,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Appointment } from '../../appointments/entities/appointment.entity';
 
 @Entity('barbers')
 export class Barber {
@@ -40,4 +42,7 @@ export class Barber {
   @ApiProperty()
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @OneToMany(() => Appointment, (appointment) => appointment.barber)
+  appointments: Appointment[];
 }

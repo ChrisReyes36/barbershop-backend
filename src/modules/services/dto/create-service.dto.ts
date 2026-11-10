@@ -11,7 +11,10 @@ import {
 } from 'class-validator';
 
 export class CreateServiceDto {
-  @ApiProperty({ example: 'Corte de cabello', description: 'Nombre del servicio' })
+  @ApiProperty({
+    example: 'Corte de cabello',
+    description: 'Nombre del servicio',
+  })
   @IsString()
   @IsNotEmpty()
   @MaxLength(150)

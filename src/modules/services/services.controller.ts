@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -77,6 +78,7 @@ export class ServicesController {
   @ApiOperation({ summary: 'Eliminar un servicio' })
   @ApiParam({ name: 'id', format: 'uuid' })
   @ApiNoContentResponse({ description: 'Servicio eliminado' })
+  @ApiConflictResponse({ description: 'El servicio tiene citas asociadas' })
   @ApiBadRequestResponse({ description: 'El id no es un UUID válido' })
   @ApiNotFoundResponse({ description: 'Servicio no encontrado' })
   remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {

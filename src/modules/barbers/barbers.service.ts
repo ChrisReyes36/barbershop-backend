@@ -4,7 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, ILike, Repository } from 'typeorm';
+import { DeleteResult, FindOptionsWhere, ILike, Repository } from 'typeorm';
+import { isForeignKeyViolation } from '../../common/database/pg-errors';
 import { Barber } from './entities/barber.entity';
 import { CreateBarberDto } from './dto/create-barber.dto';
 import { UpdateBarberDto } from './dto/update-barber.dto';
@@ -93,7 +94,17 @@ export class BarbersService {
   }
 
   async remove(id: string): Promise<void> {
-    const result = await this.barbersRepository.delete(id);
+    let result: DeleteResult;
+    try {
+      result = await this.barbersRepository.delete(id);
+    } catch (error) {
+      if (isForeignKeyViolation(error)) {
+        throw new ConflictException(
+          'Barber has appointments and cannot be deleted',
+        );
+      }
+      throw error;
+    }
     if (!result.affected) {
       throw new NotFoundException(`Barber with id ${id} not found`);
     }

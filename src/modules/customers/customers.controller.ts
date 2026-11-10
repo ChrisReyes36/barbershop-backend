@@ -80,6 +80,7 @@ export class CustomersController {
   @ApiOperation({ summary: 'Eliminar un cliente' })
   @ApiParam({ name: 'id', format: 'uuid' })
   @ApiNoContentResponse({ description: 'Cliente eliminado' })
+  @ApiConflictResponse({ description: 'El cliente tiene citas asociadas' })
   @ApiBadRequestResponse({ description: 'El id no es un UUID válido' })
   @ApiNotFoundResponse({ description: 'Cliente no encontrado' })
   remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {

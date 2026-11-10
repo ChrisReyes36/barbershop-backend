@@ -1,6 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, ILike, Repository } from 'typeorm';
+import { DeleteResult, FindOptionsWhere, ILike, Repository } from 'typeorm';
+import { isForeignKeyViolation } from '../../common/database/pg-errors';
 import { Service } from './entities/service.entity';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
@@ -80,7 +85,17 @@ export class ServicesService {
   }
 
   async remove(id: string): Promise<void> {
-    const result = await this.servicesRepository.delete(id);
+    let result: DeleteResult;
+    try {
+      result = await this.servicesRepository.delete(id);
+    } catch (error) {
+      if (isForeignKeyViolation(error)) {
+        throw new ConflictException(
+          'Service has appointments and cannot be deleted',
+        );
+      }
+      throw error;
+    }
     if (!result.affected) {
       throw new NotFoundException(`Service with id ${id} not found`);
     }

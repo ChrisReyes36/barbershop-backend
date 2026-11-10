@@ -5,7 +5,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Customer } from './entities/customer.entity';
-import { FindOptionsWhere, ILike, Repository } from 'typeorm';
+import { DeleteResult, FindOptionsWhere, ILike, Repository } from 'typeorm';
+import { isForeignKeyViolation } from '../../common/database/pg-errors';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { ListCustomerQueryDto } from './dto/list-customer.query.dto';
@@ -79,7 +80,17 @@ export class CustomersService {
   }
 
   async remove(id: string): Promise<void> {
-    const result = await this.customersRepository.delete(id);
+    let result: DeleteResult;
+    try {
+      result = await this.customersRepository.delete(id);
+    } catch (error) {
+      if (isForeignKeyViolation(error)) {
+        throw new ConflictException(
+          'Customer has appointments and cannot be deleted',
+        );
+      }
+      throw error;
+    }
     if (!result.affected) {
       throw new NotFoundException(`Customer with id ${id} not found`);
     }

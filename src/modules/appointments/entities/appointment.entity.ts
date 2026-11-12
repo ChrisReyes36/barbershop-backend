@@ -14,12 +14,15 @@ import { Barber } from '../../barbers/entities/barber.entity';
 import { Service } from '../../services/entities/service.entity';
 import { AppointmentStatus } from './appointment-status.enum';
 
+// Tabla appointments: citas entre un cliente y un barbero para un servicio.
 @Entity('appointments')
 export class Appointment {
+  // Id UUID generado por la base de datos.
   @ApiProperty({ format: 'uuid' })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  // Ids de las relaciones (columnas FK).
   @ApiProperty({ format: 'uuid' })
   @Column({ name: 'customer_id', type: 'uuid' })
   customerId: string;
@@ -32,6 +35,7 @@ export class Appointment {
   @Column({ name: 'service_id', type: 'uuid' })
   serviceId: string;
 
+  // Relaciones: se cargan con relations. RESTRICT impide borrar un registro con citas.
   @ApiProperty({ type: () => Customer })
   @ManyToOne(() => Customer, (customer) => customer.appointments, {
     nullable: false,
@@ -56,6 +60,7 @@ export class Appointment {
   @JoinColumn({ name: 'service_id' })
   service: Relation<Service>;
 
+  // Fecha y horas como texto (YYYY-MM-DD y HH:mm:ss) para evitar desfases de zona horaria.
   @ApiProperty({ example: '2026-11-20', description: 'Fecha (YYYY-MM-DD)' })
   @Column({ name: 'appointment_date', type: 'date' })
   appointmentDate: string;
@@ -68,6 +73,7 @@ export class Appointment {
   @Column({ name: 'end_time', type: 'time' })
   endTime: string;
 
+  // Estado de la cita; por defecto "scheduled".
   @ApiProperty({
     enum: AppointmentStatus,
     enumName: 'AppointmentStatus',
@@ -89,6 +95,7 @@ export class Appointment {
   @Column({ type: 'varchar', length: 500, nullable: true })
   notes: string | null;
 
+  // Fechas que mantiene TypeORM automáticamente.
   @ApiProperty()
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
+// Datos para iniciar sesión.
 export class LoginDto {
   @ApiProperty({
     example: 'admin@barbershop.com',
@@ -10,6 +11,7 @@ export class LoginDto {
   @MaxLength(150)
   email: string;
 
+  // Sin reglas de complejidad: solo se compara contra el hash guardado.
   @ApiProperty({
     example: 'MiContraseña123',
     description: 'Contraseña del usuario',

@@ -1,5 +1,6 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
 
+// Agrega la columna password (hash) a users.
 export class AddPasswordToUsers1794498315264 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.addColumn(
@@ -13,6 +14,7 @@ export class AddPasswordToUsers1794498315264 implements MigrationInterface {
     );
   }
 
+  // Revierte la migración.
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropColumn('users', 'password');
   }

@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class CreateAppointmentsTable1794340172232
-  implements MigrationInterface
-{
+// Crea la tabla appointments (citas) con sus relaciones.
+export class CreateAppointmentsTable1794340172232 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // Habilita gen_random_uuid() para los ids.
     await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "pgcrypto";');
 
     await queryRunner.createTable(
@@ -49,7 +49,7 @@ export class CreateAppointmentsTable1794340172232
             isNullable: false,
           },
           {
-            name: 'status',
+            name: 'status', // estado de la cita, por defecto 'scheduled'
             type: 'enum',
             enumName: 'appointment_status_enum',
             enum: ['scheduled', 'completed', 'cancelled', 'no_show'],
@@ -75,6 +75,7 @@ export class CreateAppointmentsTable1794340172232
             default: 'now()',
           },
         ],
+        // Una cita no deja borrar su cliente, barbero ni servicio (RESTRICT).
         foreignKeys: [
           {
             name: 'FK_appointments_customer',
@@ -101,6 +102,7 @@ export class CreateAppointmentsTable1794340172232
             onUpdate: 'CASCADE',
           },
         ],
+        // Índices para filtrar por cada relación y buscar la agenda de un barbero.
         indices: [
           {
             name: 'IDX_appointments_customer_id',
@@ -119,6 +121,7 @@ export class CreateAppointmentsTable1794340172232
             columnNames: ['barber_id', 'appointment_date'],
           },
         ],
+        // La hora de fin debe ser posterior a la de inicio.
         checks: [
           {
             name: 'CHK_appointments_time_range',
@@ -129,8 +132,10 @@ export class CreateAppointmentsTable1794340172232
     );
   }
 
+  // Revierte la migración.
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('appointments');
+    // dropTable no elimina el tipo enum de Postgres, se borra aparte.
     await queryRunner.query('DROP TYPE IF EXISTS "appointment_status_enum";');
   }
 }

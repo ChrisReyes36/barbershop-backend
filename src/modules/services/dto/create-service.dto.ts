@@ -10,6 +10,7 @@ import {
   Min,
 } from 'class-validator';
 
+// Datos para crear un servicio.
 export class CreateServiceDto {
   @ApiProperty({
     example: 'Corte de cabello',

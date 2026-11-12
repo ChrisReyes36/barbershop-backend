@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Barber } from '../entities/barber.entity';
 
+// Info de paginación de la respuesta.
 export class BarberPaginationMetaDto {
   @ApiProperty({ example: 42 })
   total: number;
@@ -15,6 +16,7 @@ export class BarberPaginationMetaDto {
   totalPages: number;
 }
 
+// Respuesta del listado: registros + paginación (solo documentación Swagger).
 export class BarberListResponseDto {
   @ApiProperty({ type: () => [Barber] })
   data: Barber[];

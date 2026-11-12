@@ -9,8 +9,10 @@ import {
 } from 'typeorm';
 import { Appointment } from '../../appointments/entities/appointment.entity';
 
+// Tabla customers: clientes.
 @Entity('customers')
 export class Customer {
+  // Id UUID generado por la base de datos.
   @ApiProperty({ format: 'uuid' })
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -27,10 +29,12 @@ export class Customer {
   @Column({ type: 'varchar', length: 30, nullable: true })
   phone: string | null;
 
+  // Estado: false = desactivado (se usa como filtro en el listado).
   @ApiProperty({ example: true })
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
+  // Fechas que mantiene TypeORM automáticamente.
   @ApiProperty()
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -39,6 +43,7 @@ export class Customer {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
+  // Citas de este cliente (lado inverso de Appointment.customer).
   @OneToMany(() => Appointment, (appointment) => appointment.customer)
   appointments: Appointment[];
 }

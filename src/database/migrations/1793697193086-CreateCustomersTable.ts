@@ -1,7 +1,9 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
+// Crea la tabla customers (clientes).
 export class CreateCustomersTable1793697193086 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // Habilita gen_random_uuid() para los ids.
     await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "pgcrypto";');
 
     await queryRunner.createTable(
@@ -53,6 +55,7 @@ export class CreateCustomersTable1793697193086 implements MigrationInterface {
             default: 'now()',
           },
         ],
+        // Email único.
         uniques: [
           {
             name: 'UQ_customers_email',
@@ -63,6 +66,7 @@ export class CreateCustomersTable1793697193086 implements MigrationInterface {
     );
   }
 
+  // Revierte la migración.
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('customers');
   }

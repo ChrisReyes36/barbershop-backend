@@ -1,7 +1,9 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
+// Crea la tabla services (servicios que ofrece la barbería).
 export class CreateServicesTable1794332440154 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // Habilita gen_random_uuid() para los ids.
     await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "pgcrypto";');
 
     await queryRunner.createTable(
@@ -28,12 +30,12 @@ export class CreateServicesTable1794332440154 implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: 'duration_minutes',
+            name: 'duration_minutes', // duración en minutos
             type: 'integer',
             isNullable: false,
           },
           {
-            name: 'price',
+            name: 'price', // dinero: numeric evita errores de redondeo
             type: 'numeric',
             precision: 10,
             scale: 2,
@@ -62,6 +64,7 @@ export class CreateServicesTable1794332440154 implements MigrationInterface {
     );
   }
 
+  // Revierte la migración.
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('services');
   }

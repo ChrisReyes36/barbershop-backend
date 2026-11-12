@@ -4,6 +4,7 @@ import { UsersService } from './users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 
+// Módulo de usuarios; exporta el servicio para que auth lo use en el login.
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [UsersController],

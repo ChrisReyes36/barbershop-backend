@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiNoContentResponse,
@@ -29,11 +30,14 @@ import { UpdateServiceDto } from './dto/update-service.dto';
 import { ListServiceQueryDto } from './dto/list-service.query.dto';
 import { ServiceListResponseDto } from './dto/service-list-response.dto';
 
+// Endpoints CRUD de servicios (requieren token).
 @ApiTags('Services')
+@ApiBearerAuth()
 @Controller('services')
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
+  // GET /services: lista paginada con filtros.
   @Get()
   @ApiOperation({ summary: 'Listar servicios con paginado y filtros' })
   @ApiOkResponse({ type: ServiceListResponseDto })
@@ -42,6 +46,7 @@ export class ServicesController {
     return this.servicesService.findAll(query);
   }
 
+  // GET /services/:id: obtiene un servicio por id (404 si no existe).
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un servicio por id' })
   @ApiParam({ name: 'id', format: 'uuid' })
@@ -52,6 +57,7 @@ export class ServicesController {
     return this.servicesService.findOne(id);
   }
 
+  // POST /services: crea un servicio.
   @Post()
   @ApiOperation({ summary: 'Crear un servicio' })
   @ApiCreatedResponse({ type: Service })
@@ -60,6 +66,7 @@ export class ServicesController {
     return this.servicesService.create(dto);
   }
 
+  // PATCH /services/:id: actualiza solo los campos enviados.
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar un servicio' })
   @ApiParam({ name: 'id', format: 'uuid' })
@@ -73,6 +80,7 @@ export class ServicesController {
     return this.servicesService.update(id, dto);
   }
 
+  // DELETE /services/:id: elimina el servicio (responde 204).
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Eliminar un servicio' })

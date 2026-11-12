@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiNoContentResponse,
@@ -29,11 +30,14 @@ import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { CustomerListResponseDto } from './dto/customer-list-response.dto';
 
+// Endpoints CRUD de clientes (requieren token).
 @ApiTags('Customers')
+@ApiBearerAuth()
 @Controller('customers')
 export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
 
+  // GET /customers: lista paginada con filtros.
   @Get()
   @ApiOperation({ summary: 'Listar clientes con paginado y filtros' })
   @ApiOkResponse({ type: CustomerListResponseDto })
@@ -42,6 +46,7 @@ export class CustomersController {
     return this.customersService.findAll(query);
   }
 
+  // GET /customers/:id: obtiene un cliente por id (404 si no existe).
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un cliente por id' })
   @ApiParam({ name: 'id', format: 'uuid' })
@@ -52,6 +57,7 @@ export class CustomersController {
     return this.customersService.findOne(id);
   }
 
+  // POST /customers: crea un cliente.
   @Post()
   @ApiOperation({ summary: 'Crear un cliente' })
   @ApiCreatedResponse({ type: Customer })
@@ -61,6 +67,7 @@ export class CustomersController {
     return this.customersService.create(dto);
   }
 
+  // PATCH /customers/:id: actualiza solo los campos enviados.
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar un cliente' })
   @ApiParam({ name: 'id', format: 'uuid' })
@@ -75,6 +82,7 @@ export class CustomersController {
     return this.customersService.update(id, dto);
   }
 
+  // DELETE /customers/:id: elimina el cliente (responde 204).
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Eliminar un cliente' })

@@ -9,8 +9,10 @@ import {
 } from 'typeorm';
 import { Appointment } from '../../appointments/entities/appointment.entity';
 
+// Tabla barbers: barberos.
 @Entity('barbers')
 export class Barber {
+  // Id UUID generado por la base de datos.
   @ApiProperty({ format: 'uuid' })
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -31,10 +33,12 @@ export class Barber {
   @Column({ type: 'varchar', length: 80, nullable: true })
   specialty: string | null;
 
+  // Estado: false = desactivado (se usa como filtro en el listado).
   @ApiProperty({ example: true })
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
+  // Fechas que mantiene TypeORM automáticamente.
   @ApiProperty()
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -43,6 +47,7 @@ export class Barber {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
+  // Citas de este barbero (lado inverso de Appointment.barber).
   @OneToMany(() => Appointment, (appointment) => appointment.barber)
   appointments: Appointment[];
 }

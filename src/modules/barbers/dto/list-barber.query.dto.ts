@@ -9,6 +9,7 @@ import {
   Min,
 } from 'class-validator';
 
+// Parámetros del listado (query string): paginado y filtros.
 export class ListBarberQueryDto {
   @ApiPropertyOptional({ default: 1, minimum: 1, description: 'Página actual' })
   @IsOptional()

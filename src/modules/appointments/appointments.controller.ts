@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiNoContentResponse,
@@ -29,11 +30,14 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { ListAppointmentQueryDto } from './dto/list-appointment.query.dto';
 import { AppointmentListResponseDto } from './dto/appointment-list-response.dto';
 
+// Endpoints CRUD de citas (requieren token).
 @ApiTags('Appointments')
+@ApiBearerAuth()
 @Controller('appointments')
 export class AppointmentsController {
   constructor(private readonly appointmentsService: AppointmentsService) {}
 
+  // GET /appointments: lista paginada con filtros (estado, cliente, barbero, servicio, fechas).
   @Get()
   @ApiOperation({ summary: 'Listar citas con paginado y filtros' })
   @ApiOkResponse({ type: AppointmentListResponseDto })
@@ -42,6 +46,7 @@ export class AppointmentsController {
     return this.appointmentsService.findAll(query);
   }
 
+  // GET /appointments/:id: obtiene una cita con su cliente, barbero y servicio.
   @Get(':id')
   @ApiOperation({ summary: 'Obtener una cita por id' })
   @ApiParam({ name: 'id', format: 'uuid' })
@@ -52,6 +57,7 @@ export class AppointmentsController {
     return this.appointmentsService.findOne(id);
   }
 
+  // POST /appointments: crea una cita validando horario y disponibilidad del barbero.
   @Post()
   @ApiOperation({ summary: 'Crear una cita' })
   @ApiCreatedResponse({ type: Appointment })
@@ -66,6 +72,7 @@ export class AppointmentsController {
     return this.appointmentsService.create(dto);
   }
 
+  // PATCH /appointments/:id: actualiza datos o el estado de la cita.
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar una cita (incluido su estado)' })
   @ApiParam({ name: 'id', format: 'uuid' })
@@ -86,6 +93,7 @@ export class AppointmentsController {
     return this.appointmentsService.update(id, dto);
   }
 
+  // DELETE /appointments/:id: elimina la cita (responde 204).
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Eliminar una cita' })

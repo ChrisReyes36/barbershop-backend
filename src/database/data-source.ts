@@ -4,6 +4,7 @@ import { validateEnv } from '../config/env/validation';
 
 const env = validateEnv(process.env as Record<string, unknown>);
 
+// DataSource para la CLI de TypeORM (migraciones) y el seed, fuera de Nest.
 export default new DataSource({
   type: 'postgres',
   host: env.DB_HOST,

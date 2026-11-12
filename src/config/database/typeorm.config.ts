@@ -1,6 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
+// Arma la conexión a Postgres con las variables de entorno validadas.
 export function createTypeOrmOptions(
   configService: ConfigService,
 ): TypeOrmModuleOptions {
@@ -19,8 +20,8 @@ export function createTypeOrmOptions(
     password,
     database,
     applicationName: 'barbershop-api',
-    synchronize: false,
-    autoLoadEntities: true,
+    synchronize: false, // el esquema se maneja solo con migraciones
+    autoLoadEntities: true, // registra las entidades de cada forFeature()
     logging: ['error', 'schema', 'warn', 'query'],
     ssl: useSsl ? { rejectUnauthorized: false } : false,
   };

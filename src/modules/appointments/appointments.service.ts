@@ -32,8 +32,10 @@ const BLOCKING_STATUSES = [
   AppointmentStatus.COMPLETED,
 ];
 
+// Relaciones que se cargan al devolver una cita.
 const RELATIONS = { customer: true, barber: true, service: true };
 
+// Lógica de negocio de citas.
 @Injectable()
 export class AppointmentsService {
   constructor(
@@ -47,6 +49,7 @@ export class AppointmentsService {
     private readonly servicesRepository: Repository<Service>,
   ) {}
 
+  // Lista paginada con filtros por estado, cliente, barbero, servicio, rango de fechas y notas.
   async findAll(query: ListAppointmentQueryDto): Promise<{
     data: Appointment[];
     meta: {
@@ -68,6 +71,7 @@ export class AppointmentsService {
       dateTo,
     } = query;
 
+    // Arma el where solo con los filtros recibidos.
     const where: FindOptionsWhere<Appointment> = {};
     if (status) where.status = status;
     if (customerId) where.customerId = customerId;
@@ -85,6 +89,7 @@ export class AppointmentsService {
     const term = search?.trim();
     if (term) where.notes = ILike(`%${term}%`);
 
+    // Más recientes primero; dentro de un día, por hora de inicio.
     const [data, total] = await this.appointmentsRepository.findAndCount({
       where,
       relations: RELATIONS,
@@ -104,6 +109,7 @@ export class AppointmentsService {
     };
   }
 
+  // Busca una cita con sus relaciones; lanza 404 si no existe.
   async findOne(id: string): Promise<Appointment> {
     const appointment = await this.appointmentsRepository.findOne({
       where: { id },
@@ -115,7 +121,9 @@ export class AppointmentsService {
     return appointment;
   }
 
+  // Crea una cita: valida horas, que existan y estén activos cliente/barbero/servicio, y que el barbero esté libre.
   async create(dto: CreateAppointmentDto): Promise<Appointment> {
+    // Normaliza las horas a HH:mm:ss para compararlas como texto.
     const startTime = this.normalizeTime(dto.startTime);
     const endTime = this.normalizeTime(dto.endTime);
 
@@ -141,6 +149,7 @@ export class AppointmentsService {
     return this.findOne(saved.id);
   }
 
+  // Actualiza una cita combinando lo enviado con lo guardado y revalidando lo que cambió.
   async update(id: string, dto: UpdateAppointmentDto): Promise<Appointment> {
     // Se carga sin relaciones: si estuvieran cargadas, `save` daría prioridad
     // al objeto relacionado y no al nuevo `customerId`/`barberId`/`serviceId`.
@@ -151,6 +160,7 @@ export class AppointmentsService {
       throw new NotFoundException(`Appointment with id ${id} not found`);
     }
 
+    // Valores finales: lo enviado o, si no viene, lo que ya tenía la cita.
     const customerId = dto.customerId ?? appointment.customerId;
     const barberId = dto.barberId ?? appointment.barberId;
     const serviceId = dto.serviceId ?? appointment.serviceId;
@@ -175,6 +185,7 @@ export class AppointmentsService {
       );
     }
 
+    // Solo revisa choques si la cita sigue ocupando el horario.
     if (BLOCKING_STATUSES.includes(status)) {
       await this.assertBarberAvailable({
         barberId,
@@ -199,6 +210,7 @@ export class AppointmentsService {
     return this.findOne(id);
   }
 
+  // Elimina por id; lanza 404 si no existe.
   async remove(id: string): Promise<void> {
     const result = await this.appointmentsRepository.delete(id);
     if (!result.affected) {
@@ -211,6 +223,7 @@ export class AppointmentsService {
     return time.length === 5 ? `${time}:00` : time;
   }
 
+  // Lanza 400 si la hora de fin no es posterior a la de inicio.
   private assertTimeRange(startTime: string, endTime: string): void {
     if (endTime <= startTime) {
       throw new BadRequestException('endTime must be after startTime');

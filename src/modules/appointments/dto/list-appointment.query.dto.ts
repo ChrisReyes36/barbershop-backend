@@ -14,6 +14,7 @@ import {
 import { AppointmentStatus } from '../entities/appointment-status.enum';
 import { DATE_REGEX } from './create-appointment.dto';
 
+// Parámetros del listado (query string): paginado y filtros.
 export class ListAppointmentQueryDto {
   @ApiPropertyOptional({ default: 1, minimum: 1, description: 'Página actual' })
   @IsOptional()

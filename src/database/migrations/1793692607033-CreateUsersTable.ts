@@ -1,7 +1,9 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
+// Crea la tabla users (usuarios del sistema).
 export class CreateUserTable1793692607033 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // Habilita gen_random_uuid() para los ids.
     await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "pgcrypto";');
 
     await queryRunner.createTable(
@@ -29,7 +31,7 @@ export class CreateUserTable1793692607033 implements MigrationInterface {
             isNullable: false,
           },
           {
-            name: 'role',
+            name: 'role', // p. ej. 'admin'
             type: 'varchar',
             length: '50',
             isNullable: false,
@@ -51,6 +53,7 @@ export class CreateUserTable1793692607033 implements MigrationInterface {
             default: 'now()',
           },
         ],
+        // Email único.
         uniques: [
           {
             name: 'UQ_users_email',
@@ -61,6 +64,7 @@ export class CreateUserTable1793692607033 implements MigrationInterface {
     );
   }
 
+  // Revierte la migración.
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('users');
   }

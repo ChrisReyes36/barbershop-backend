@@ -7,6 +7,7 @@ import {
   MaxLength,
 } from 'class-validator';
 
+// Datos para crear un barbero.
 export class CreateBarberDto {
   @ApiProperty({ example: 'Carlos Ramírez', description: 'Nombre del barbero' })
   @IsString()

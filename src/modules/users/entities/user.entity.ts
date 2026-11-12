@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+// Tabla users: personas que inician sesión en el sistema.
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -17,6 +18,7 @@ export class User {
   @Column({ type: 'varchar', length: 150, unique: true })
   email: string;
 
+  // Hash bcrypt; select: false evita devolverlo en las consultas normales.
   @Column({ type: 'varchar', length: 255, select: false })
   password: string;
 

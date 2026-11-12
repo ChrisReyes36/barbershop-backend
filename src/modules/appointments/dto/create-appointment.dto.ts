@@ -8,9 +8,11 @@ import {
   MaxLength,
 } from 'class-validator';
 
+// Formatos aceptados: fecha YYYY-MM-DD y hora HH:mm o HH:mm:ss.
 export const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 export const TIME_REGEX = /^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/;
 
+// Datos para crear una cita.
 export class CreateAppointmentDto {
   @ApiProperty({ format: 'uuid', description: 'Id del cliente' })
   @IsUUID()

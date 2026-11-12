@@ -11,6 +11,7 @@ import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { ListServiceQueryDto } from './dto/list-service.query.dto';
 
+// Lógica de negocio de servicios.
 @Injectable()
 export class ServicesService {
   constructor(
@@ -18,6 +19,7 @@ export class ServicesService {
     private readonly servicesRepository: Repository<Service>,
   ) {}
 
+  // Lista paginada: filtra por estado y busca por nombre o descripción.
   async findAll(query: ListServiceQueryDto): Promise<{
     data: Service[];
     meta: {
@@ -29,6 +31,7 @@ export class ServicesService {
   }> {
     const { page, perPage, search, isActive } = query;
 
+    // Filtro opcional por estado activo/inactivo.
     const base: FindOptionsWhere<Service> = {};
     if (isActive !== undefined) base.isActive = isActive;
 
@@ -42,6 +45,7 @@ export class ServicesService {
         ]
       : base;
 
+    // Trae la página pedida y el total de registros.
     const [data, total] = await this.servicesRepository.findAndCount({
       where,
       order: { createdAt: 'DESC' },
@@ -60,6 +64,7 @@ export class ServicesService {
     };
   }
 
+  // Busca por id; lanza 404 si no existe.
   async findOne(id: string): Promise<Service> {
     const service = await this.servicesRepository.findOne({ where: { id } });
     if (!service) {
@@ -68,6 +73,7 @@ export class ServicesService {
     return service;
   }
 
+  // Crea un servicio.
   create(dto: CreateServiceDto): Promise<Service> {
     const service = this.servicesRepository.create({
       name: dto.name,
@@ -78,12 +84,15 @@ export class ServicesService {
     return this.servicesRepository.save(service);
   }
 
+  // Actualiza un servicio; lanza 404 si no existe.
   async update(id: string, dto: UpdateServiceDto): Promise<Service> {
     const service = await this.findOne(id);
+    // Aplica solo los campos recibidos.
     Object.assign(service, dto);
     return this.servicesRepository.save(service);
   }
 
+  // Elimina por id: 404 si no existe, 409 si tiene citas asociadas.
   async remove(id: string): Promise<void> {
     let result: DeleteResult;
     try {

@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './modules/auth/guards/jwt.auth-guard';
 import { HealthModule } from './modules/health/health.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AppointmentsModule } from './modules/appointments/appointments.module';
@@ -11,6 +13,7 @@ import { validateEnv } from './config/env/validation';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { createTypeOrmOptions } from './config/database/typeorm.config';
 
+// Módulo raíz: une la configuración, la base de datos y los módulos de la app.
 @Module({
   imports: [
     // Env y config global
@@ -34,6 +37,9 @@ import { createTypeOrmOptions } from './config/database/typeorm.config';
     UsersModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    // Autenticación JWT en todas las rutas; las públicas usan @Public().
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+  ],
 })
 export class AppModule {}

@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
+// Datos para crear un cliente.
 export class CreateCustomerDto {
   @ApiProperty({ example: 'Juan Pérez', description: 'Nombre del cliente' })
   @IsString()

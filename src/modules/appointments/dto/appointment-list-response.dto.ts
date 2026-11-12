@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Appointment } from '../entities/appointment.entity';
 
+// Info de paginación de la respuesta.
 export class AppointmentPaginationMetaDto {
   @ApiProperty({ example: 42 })
   total: number;
@@ -15,6 +16,7 @@ export class AppointmentPaginationMetaDto {
   totalPages: number;
 }
 
+// Respuesta del listado: citas + paginación (solo documentación Swagger).
 export class AppointmentListResponseDto {
   @ApiProperty({ type: () => [Appointment] })
   data: Appointment[];

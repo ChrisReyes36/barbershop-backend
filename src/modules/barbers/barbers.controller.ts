@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiNoContentResponse,
@@ -29,11 +30,14 @@ import { UpdateBarberDto } from './dto/update-barber.dto';
 import { ListBarberQueryDto } from './dto/list-barber.query.dto';
 import { BarberListResponseDto } from './dto/barber-list-response.dto';
 
+// Endpoints CRUD de barberos (requieren token).
 @ApiTags('Barbers')
+@ApiBearerAuth()
 @Controller('barbers')
 export class BarbersController {
   constructor(private readonly barbersService: BarbersService) {}
 
+  // GET /barbers: lista paginada con filtros.
   @Get()
   @ApiOperation({ summary: 'Listar barberos con paginado y filtros' })
   @ApiOkResponse({ type: BarberListResponseDto })
@@ -42,6 +46,7 @@ export class BarbersController {
     return this.barbersService.findAll(query);
   }
 
+  // GET /barbers/:id: obtiene un barbero por id (404 si no existe).
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un barbero por id' })
   @ApiParam({ name: 'id', format: 'uuid' })
@@ -52,6 +57,7 @@ export class BarbersController {
     return this.barbersService.findOne(id);
   }
 
+  // POST /barbers: crea un barbero.
   @Post()
   @ApiOperation({ summary: 'Crear un barbero' })
   @ApiCreatedResponse({ type: Barber })
@@ -61,6 +67,7 @@ export class BarbersController {
     return this.barbersService.create(dto);
   }
 
+  // PATCH /barbers/:id: actualiza solo los campos enviados.
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar un barbero' })
   @ApiParam({ name: 'id', format: 'uuid' })
@@ -75,6 +82,7 @@ export class BarbersController {
     return this.barbersService.update(id, dto);
   }
 
+  // DELETE /barbers/:id: elimina el barbero (responde 204).
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Eliminar un barbero' })

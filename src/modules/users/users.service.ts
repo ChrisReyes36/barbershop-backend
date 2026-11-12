@@ -13,4 +13,11 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
+  findByEmailWithPassword(email: string): Promise<User | null> {
+    return this.usersRepository
+      .createQueryBuilder('user')
+      .addSelect('user.password')
+      .where('user.email = :email', { email: email.toLocaleLowerCase().trim() })
+      .getOne();
+  }
 }

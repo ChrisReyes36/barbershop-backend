@@ -11,6 +11,8 @@ const envSchema = z.object({
     .enum(['true', 'false'])
     .default('false')
     .transform((value) => value === 'true'),
+  JWT_SECRET: z.string().min(32),
+  JWT_EXPIRES_IN: z.coerce.number().int().positive().default(3600),
 });
 
 export type EnvVars = z.infer<typeof envSchema>;
